@@ -1,0 +1,20 @@
+/* CSS Document */
+* { margin:0; padding:0; border:0px none #FFFFFF;}
+img{border:0;}
+li{list-style:none;}
+a { text-decoration:none; cursor: pointer;cursor: hand;}
+body a{outline:none;blr:expression(this.onFocus=this.blur());}
+.mydivtitle{ width:388px; height:30px; background-color:#C7E0F7; border-bottom:1px solid #ABD0F3; font-size:16px; color:#000; line-height:30px; padding-left:10px; text-align:left;}
+.mydiv {background-color:#fff;border:3px solid #ccc;text-align: center;line-height: 40px;font-size: 12px;font-weight: bold;z-index:11000;width: 398px;height: auto;left: 50%;top: 50%;margin-left: -200px!important;/*FF IE7 该值为本身宽的一半 */margin-top: -60px!important;/*FF IE7 该值为本身高的一半*/margin-top: 0px;position: fixed!important;/* FF IE7*/position: absolute;/*IE6*/
+_top:expression(eval(document.compatMode &&  document.compatMode=='CSS1Compat') ?  documentElement.scrollTop + (document.documentElement.clientHeight-this.offsetHeight)/2 :/*IE6*/
+ document.body.scrollTop + (document.body.clientHeight - this.clientHeight)/2);/*IE5 IE5.5*/ }
+.mydiv a {display:block;width:60px;height:20px;line-height: 20px;background-color:#f8f8f8;border: 1px solid #ccc;border-radius: 3px;color:#333;text-decoration: none;text-align: center; float:left; margin-right:10px; font-size:12px;}
+.mydiv a:hover {background-color: #6a92db; color:#FFF;}
+.mydivcont{ width:360px; height:60px; float:left; line-height:180%;font-size:14px; padding-top:15px; color:#333; padding-left:20px; padding-right:20px; }
+.mydivbutton{ width:60px; height:40px; float:left; padding-left:170px;}
+.mydivbutton1{ width:150px; height:40px; float:left; padding-left:130px;}
+.bg, .popIframe {background-color: #666;display: none;width: 100%;height: 100%;left: 0;top: 0;/*FF IE7*/filter: alpha(opacity=50);/*IE*/opacity: 0.5;/*FF*/z-index: 1;position: fixed!important;/*FF IE7*/position: absolute;/*IE6*/
+_top:       expression(eval(document.compatMode &&  document.compatMode=='CSS1Compat') ?  documentElement.scrollTop + (document.documentElement.clientHeight-this.offsetHeight)/2 :/*IE6*/
+ document.body.scrollTop + (document.body.clientHeight - this.clientHeight)/2);
+}
+.popIframe {filter: alpha(opacity=0);/*IE*/opacity: 0;/*FF*/}

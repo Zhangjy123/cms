@@ -1,0 +1,18 @@
+package com.yofang.cms.service.impl.sysmanage;
+
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.sysmanage.PrivilegeDaoImpl;
+import com.yofang.cms.model.sysmanage.Privilege;
+import com.yofang.cms.service.impl.BaseServiceImpl;
+import com.yofang.cms.service.sysmanage.PrivilegeService;
+
+@IocBean(name="privilegeService", args={"refer:privilegeDao"})
+public class PrivilegeServiceImpl extends BaseServiceImpl<Privilege, PrivilegeDaoImpl> implements PrivilegeService {
+	
+	
+	public PrivilegeServiceImpl(PrivilegeDaoImpl baseDao) {
+		super(baseDao);
+	}
+}

@@ -1,0 +1,8 @@
+package com.yofang.cms.service.customermanage;
+
+
+import com.yofang.cms.model.customermanage.Approve;
+import com.yofang.cms.service.BaseService;
+
+public interface ApproveService extends BaseService<Approve>{
+}

@@ -1,0 +1,11 @@
+package com.yofang.cms.dao.sysmanage;
+
+import com.yofang.cms.dao.BaseDao;
+import com.yofang.cms.model.sysmanage.OperateLog;
+
+/**
+ * 保存用户的操作日志
+ * @author hsh
+ */
+public interface OperateLogDao extends BaseDao<OperateLog>{
+}

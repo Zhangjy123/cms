@@ -1,0 +1,9 @@
+package com.yofang.cms.dao.customermanage;
+
+
+import com.yofang.cms.dao.BaseDao;
+import com.yofang.cms.model.customermanage.Approve;
+
+public interface ApproveDao extends BaseDao<Approve>{
+	
+}

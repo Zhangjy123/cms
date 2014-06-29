@@ -1,0 +1,14 @@
+package com.yofang.cms.dao.impl.sysmanage;
+
+
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.BaseDaoImpl;
+import com.yofang.cms.dao.sysmanage.PrivilegeDao;
+import com.yofang.cms.model.sysmanage.Privilege;
+
+@IocBean(name="privilegeDao",fields={"dao"})
+public class PrivilegeDaoImpl extends BaseDaoImpl<Privilege> implements PrivilegeDao {
+
+}

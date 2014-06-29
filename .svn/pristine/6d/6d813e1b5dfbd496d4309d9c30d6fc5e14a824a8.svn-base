@@ -1,0 +1,35 @@
+package cn.sail.manage.datasource;
+
+import org.junit.Test;
+import org.nutz.dao.Dao;
+import org.nutz.dao.impl.NutDao;
+import org.nutz.dao.sql.OrderBy;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.yofang.cms.manage.datasource.DataManager;
+import com.yofang.cms.model.customermanage.Approve;
+import com.yofang.cms.model.customermanage.Customer;
+import com.yofang.cms.model.customermanage.CustomerFollow;
+import com.yofang.cms.model.sysmanage.Channel;
+import com.yofang.cms.model.sysmanage.OperateLog;
+import com.yofang.cms.model.sysmanage.Privilege;
+import com.yofang.cms.model.sysmanage.Role;
+import com.yofang.cms.model.sysmanage.User;
+
+public class DataManagerTest {
+	
+	@Test
+	public void testDataSource () {
+		DruidDataSource ds = DataManager.getDataSource();
+		System.out.println(ds);
+		Dao dao = new NutDao(ds);
+		dao.create(User.class, false);
+		dao.create(Role.class, false);
+		dao.create(Privilege.class, false);
+		dao.create(Channel.class, false);
+		dao.create(OperateLog.class, false);
+		dao.create(Customer.class, false);
+		dao.create(CustomerFollow.class, false);
+		dao.create(Approve.class, false);
+	}
+} 

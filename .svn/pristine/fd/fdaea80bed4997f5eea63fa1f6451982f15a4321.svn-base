@@ -1,0 +1,9 @@
+package com.yofang.cms.dao.sysmanage;
+
+
+import com.yofang.cms.dao.BaseDao;
+import com.yofang.cms.model.sysmanage.Channel;
+
+public interface ChannelDao extends BaseDao<Channel>{
+	
+}

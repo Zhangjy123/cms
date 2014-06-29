@@ -1,0 +1,45 @@
+package com.yofang.cms.web.module.system;
+
+
+import java.util.Date;
+
+import org.nutz.dao.QueryResult;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.mvc.View;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.view.JspView;
+import org.nutz.mvc.view.ViewWrapper;
+
+import com.yofang.cms.service.OperateLogService;
+
+/**
+ * 后台管理用户操作日志
+ * @author hsh
+ */
+@IocBean(scope ="request")
+@At("/operatelog")
+public class OperateLogAction {
+	private static final int PAGESIZE = 13;
+	
+	@Inject
+	private OperateLogService operateLogService;
+
+	/**
+	 * 操作日志分页信息（无过滤条件）
+	 */
+	@At("/index")
+	public View getPage(@Param("pageNum") int pageNum) {
+		QueryResult qr = this.operateLogService.getPageInfoOrderByTime(pageNum, OperateLogAction.PAGESIZE);
+		return new ViewWrapper(new JspView("jsp.back.sysmanage.operatelogIndex"), qr);
+	}
+	
+	/**
+	 * 操作日志分页信息（过滤条件:时间范围）
+	 */
+	public View getPageByCondition(@Param("pageNum") int pageNum, @Param("startTime") Date startTime, @Param("endTime") Date endTime) {
+		QueryResult qr = this.operateLogService.getPageInfoByTime(pageNum, OperateLogAction.PAGESIZE, startTime, endTime);
+		return null;
+	}
+}

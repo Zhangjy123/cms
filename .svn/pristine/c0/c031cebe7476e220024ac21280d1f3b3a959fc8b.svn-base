@@ -1,0 +1,16 @@
+package com.yofang.cms.service.impl.customermanage;
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.customermanage.ApproveDaoImpl;
+import com.yofang.cms.model.customermanage.Approve;
+import com.yofang.cms.service.customermanage.ApproveService;
+import com.yofang.cms.service.impl.BaseServiceImpl;
+
+@IocBean(name="approveService", args={"refer:approveDao"})
+public class ApproveServiceImpl extends BaseServiceImpl<Approve, ApproveDaoImpl> implements ApproveService {
+	
+	public ApproveServiceImpl(ApproveDaoImpl baseDao) {
+		super(baseDao);
+	}
+}

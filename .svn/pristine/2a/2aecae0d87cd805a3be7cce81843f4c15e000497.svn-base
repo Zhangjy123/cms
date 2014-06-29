@@ -1,0 +1,415 @@
+package com.yofang.cms.model.customermanage;
+
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.Many;
+import org.nutz.dao.entity.annotation.One;
+import org.nutz.dao.entity.annotation.Table;
+
+import com.yofang.cms.model.sysmanage.Channel;
+import com.yofang.cms.model.sysmanage.Project;
+import com.yofang.cms.model.sysmanage.User;
+
+/**
+ * @author gaozp
+ *
+ */
+
+@Table("MANAGE_CUSTOMER")
+public class Customer implements Serializable{
+	private static final long serialVersionUID = 8846883469355157419L;
+	
+	/** 主键*/
+	@Id
+	private Integer id;
+	
+	/** 该条信息的创建人*/
+	private Integer userId;
+	@One(target=User.class, field="userId")
+	private User user;
+	
+	/** 姓名*/
+	private String realName;
+	/** 手机号*/
+	private String mobile;
+	
+	/** 状态-跟进信息状态 */
+	private Integer state;
+	/** 状态-跟进信息状态 --销售添加客户基本信息*/
+	public final static int STATE_FOLLOW_ADDCINFO = 1;
+	/** 状态-跟进信息状态 --添加预约信息*/
+	public final static int STATE_FOLLOW_YUYUE = 11;
+	/** 状态-跟进信息状态 --添加跟进信息*/
+	public final static int STATE_FOLLOW_FOLLOW = 12;
+	/** 状态-跟进信息状态-进入审批阶段 */
+	public final static int STATE_FOLLOW_APPROVAL = 2;
+	/** 状态- 流程结束*/
+	public final static int STATE_FOLLOW_END = 3;
+	
+	/** 审批流程状态*/
+	/** 状态-审批-该条信息现阶段是那个阶段的审批--审批确认和申请在页面控制 */
+	private Integer approveState;
+	/** 状态-审批-申请定金审批阶段（流程启动）*/
+	public final static int APPROVESTATE_DEPOSITAPPLY = 29;
+	/** 状态-审批-定金审批阶段*/
+	public final static int APPROVESTATE_DEPOSIT = 21;
+	/** 状态-审批-签约审批阶段*/
+	public final static int APPROVESTATE_SIGNING = 22;
+	/** 状态-审批-付款方式阶段*/
+	public final static int APPROVESTATE_PAYWAY = 23;
+	/** 状态-审批-经理确认成交阶段*/
+	public final static int APPROVESTATE_MANAGECONFIRM = 24;
+	/** 状态-审批-总监成交确认*/
+	public final static int APPROVESTATE_DIRECTORCONFIRM = 25;
+	/** 状态-审批-总经理成交确认*/
+	public final static int APPROVESTATE_GENERALMANAGRECONFIRM = 26;
+	/** 状态-审批-财务成交确认*/
+	public final static int APPROVESTATE_AFFAIRSCONFIRM = 27;
+	/** 状态-审批-财务成交确认*/
+	public final static int APPROVESTATE_END = 28;
+	
+	@Many(target=Approve.class, field="customerId")
+	private List<Approve> approves;
+	
+	/** 城市*/
+	private String city;
+	/** 城区*/
+	private String district;
+	/** 商圈*/
+	private String hotArea;
+	
+	/** 客户类别-个人 */
+	public final static int CUSTOMERTYPE_PERSONAL = 1;
+	/** 客户类别-公司 */
+	public final static int CUSTOMERTYPE_COMPANY = 2;
+	/** 客户类别 */
+	private Integer customerType;
+	
+	/** 来源-直客 */
+	public final static int FROMWHERE_DIRECTOR = 1;
+	/** 来源-渠道客户 */
+	public final static int FROMWHERE_CHANNEL = 2;
+	/** 来源-公司内部*/
+	public final static int FROMWHERE_COMPANY = 3;
+	/** 来源-客户推荐*/
+	public final static int FROMWHERE_CUSTOMERR = 4;
+	/** 来源	*/
+	private Integer fromWhere;
+	/** 来源-推荐人*/
+	private String referee;
+	
+	private Integer projectId;
+	@One(target=Project.class, field="projectId")
+	private Project project;
+	
+	public List<Approve> getApproves() {
+		return approves;
+	}
+
+	public void setApproves(List<Approve> approves) {
+		this.approves = approves;
+	}
+	/** 登记时间(创建时间)*/
+	private Date createTime;
+	
+	/** 预约-经纪人*/
+	private String agentName;
+	/** 预约-经纪人*/
+	private String agentMobile;
+	/** 预约-该经纪人所属的公司名*/
+	private Integer channelId;
+	@One(target=Channel.class, field="channelId")
+	private Channel channel;
+	/** 预约-预约时间*/
+	private Date appointmentTime;
+	/** 需求*/
+	private String requirement;
+	
+	/** 客户跟进:一对多*/
+	@Many(target=CustomerFollow.class, field="customerId")
+	private List<CustomerFollow> customerFollows;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+	
+	public String getAgentMobile() {
+		return agentMobile;
+	}
+
+	public void setAgentMobile(String agentMobile) {
+		this.agentMobile = agentMobile;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public Integer getApproveState() {
+		return approveState;
+	}
+
+	public void setApproveState(Integer approveState) {
+		this.approveState = approveState;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+
+	public String getHotArea() {
+		return hotArea;
+	}
+
+	public void setHotArea(String hotArea) {
+		this.hotArea = hotArea;
+	}
+
+	public Integer getCustomerType() {
+		return customerType;
+	}
+
+	public void setCustomerType(Integer customerType) {
+		this.customerType = customerType;
+	}
+
+	public Integer getFromWhere() {
+		return fromWhere;
+	}
+
+	public void setFromWhere(Integer fromWhere) {
+		this.fromWhere = fromWhere;
+	}
+	
+	public String getReferee() {
+		return referee;
+	}
+
+	public void setReferee(String referee) {
+		this.referee = referee;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getAgentName() {
+		return agentName;
+	}
+
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+	
+	
+	public Integer getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(Integer channelId) {
+		this.channelId = channelId;
+	}
+
+	public Channel getChannel() {
+		return channel;
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+
+	public Date getAppointmentTime() {
+		return appointmentTime;
+	}
+
+	public void setAppointmentTime(Date appointmentTime) {
+		this.appointmentTime = appointmentTime;
+	}
+
+	public String getRequirement() {
+		return requirement;
+	}
+
+	public void setRequirement(String requirement) {
+		this.requirement = requirement;
+	}
+
+	public List<CustomerFollow> getCustomerFollows() {
+		return customerFollows;
+	}
+
+	public void setCustomerFollows(List<CustomerFollow> customerFollows) {
+		this.customerFollows = customerFollows;
+	}
+	
+	/**
+	 * 数字字典--流程状态对应的名字
+	 * @param user
+	 * @param approveState
+	 * @return
+	 */
+	public static String getApproveName(Integer approveState) {
+		if (approveState == null) {
+			return null;
+		}
+		
+		if (approveState == 21) {
+			return "客户定金付款确认";
+		} else if(approveState == 22) {
+			return "客户签约确认";
+		} else if(approveState == 23) {
+			return "客户付款确认";
+		} else if(approveState == 24) {
+			return "经理成交确认";
+		} else if(approveState == 25) {
+			return "项目总监成交确认";
+		} else if(approveState == 26) {
+			return "总经理成交确认";
+		}else if(approveState == 27) {
+			return "财务成交确认";
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 该流程节点由那个角色审批
+	 * @param user
+	 * @param approveState
+	 * @return
+	 */
+	public static String getApproveRole(Integer currentApproveState) {
+		if (currentApproveState == null) {
+			return null;
+		}
+		
+		if (currentApproveState == 21) {
+			return "经理";
+		} else if(currentApproveState == 22) {
+			return "经理";
+		} else if(currentApproveState == 23) {
+			return "经理";
+		} else if(currentApproveState == 24) {
+			return "经理";
+		} else if(currentApproveState == 25) {
+			return "项目总监";
+		} else if(currentApproveState == 26) {
+			return "总经理";
+		} else if(currentApproveState == 27) {
+			return "财务";
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 获取下一个流程状态
+	 * @param currentState
+	 * @return 如果为空，没匹配到
+	 */
+	public static Integer getNextApproveState(Integer currentState) {
+		//如果currentState为空，说明是刚启动流程，进入定金审批
+		if (currentState == Customer.APPROVESTATE_DEPOSITAPPLY) {
+			return Customer.APPROVESTATE_DEPOSIT;
+		//签约
+		} else if(currentState == Customer.APPROVESTATE_DEPOSIT) {
+			return Customer.APPROVESTATE_SIGNING;
+		//支付方式
+		} else if(currentState == Customer.APPROVESTATE_SIGNING) {
+			return Customer.APPROVESTATE_PAYWAY;
+		//经理成交确认
+		} else if(currentState == Customer.APPROVESTATE_PAYWAY) {
+			return Customer.APPROVESTATE_MANAGECONFIRM;
+		//总监成交确认
+		} else if(currentState == Customer.APPROVESTATE_MANAGECONFIRM) {
+			return Customer.APPROVESTATE_DIRECTORCONFIRM;
+		//总经理成交确认
+		} else if(currentState == Customer.APPROVESTATE_DIRECTORCONFIRM) {
+			return Customer.APPROVESTATE_GENERALMANAGRECONFIRM;
+		//财务成交确认
+		} else if(currentState == Customer.APPROVESTATE_GENERALMANAGRECONFIRM) {
+			return Customer.APPROVESTATE_AFFAIRSCONFIRM;
+		//财务确认完流程结束
+		}  else if(currentState == Customer.APPROVESTATE_AFFAIRSCONFIRM) {
+			return Customer.APPROVESTATE_END;
+		} else {
+			return null;
+		}
+	}
+} 

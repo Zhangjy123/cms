@@ -1,0 +1,370 @@
+package com.yofang.cms.web.module.back.customermanage;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.nutz.dao.Cnd;
+import org.nutz.dao.QueryResult;
+import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
+import org.nutz.mvc.View;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.view.JspView;
+import org.nutz.mvc.view.RawView;
+import org.nutz.mvc.view.UTF8JsonView;
+import org.nutz.mvc.view.ViewWrapper;
+
+import cn.yofang.dao.model.inter.ICity;
+import cn.yofang.service.ServiceFactory;
+
+import com.yofang.cms.enums.RoleType;
+import com.yofang.cms.manage.ManagerService;
+import com.yofang.cms.model.customermanage.Customer;
+import com.yofang.cms.model.customermanage.CustomerFollow;
+import com.yofang.cms.model.sysmanage.Channel;
+import com.yofang.cms.model.sysmanage.Project;
+import com.yofang.cms.model.sysmanage.User;
+import com.yofang.cms.service.customermanage.CustomerFollowService;
+import com.yofang.cms.service.customermanage.CustomerService;
+import com.yofang.cms.service.sysmanage.ChannelService;
+import com.yofang.cms.service.sysmanage.ProjectService;
+import com.yofang.cms.utils.DateUtil;
+import com.yofang.cms.utils.Formater;
+
+/**
+ * 后台管理员渠道管理
+ * @author gaozp
+ */
+@IocBean(scope = "request")
+@At("/customer")
+public class CustomerAction {
+	private static final int PAGESIZE = 13;
+	
+	
+	@Inject
+	private CustomerService customerService;
+	@Inject
+	private CustomerFollowService customerFollowService;
+	@Inject
+	private ProjectService projectService;
+	@Inject
+	private ChannelService channelService;
+
+	
+	
+	/**
+	 * 查看客户列表
+	 * 注意：销售和渠道销售只能看到自己添加的
+	 * 
+	 */
+	@At("/index")
+	public View index(HttpServletRequest request, @Param("pageNum") int pageNum) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		User user = ManagerService.getUser(request);
+		QueryResult qr = null;
+		//销售和渠道销售只能看到自己添加的数据
+		if (RoleType.SALES.getName().equals(user.getRole().getName()) || RoleType.CHANNEL_SALES.getName().equals(user.getRole().getName())) {
+			qr = customerService.getPageListByConditionCascade(pageNum, PAGESIZE, Cnd.wrap("where userid="+user.getId()+" order by createTime desc"));
+		} else {
+			qr = customerService.getPageListByConditionCascade(pageNum, CustomerAction.PAGESIZE,Cnd.wrap(" order by createTime desc"));
+		}
+		
+		//查询所有渠道公司和项目名称
+		List<Channel> channels = channelService.findAll();
+		List<Project> projects = projectService.findAll();
+		
+		data.put("qr", qr);
+		data.put("realName", null);
+		data.put("customerType", null);
+		data.put("fromWhere", null);
+		data.put("startTime", null);
+		data.put("endTime", null);
+		data.put("projectId", null);
+		data.put("channelId", null);
+		data.put("channels", channels);
+		data.put("projects", projects);
+		return new ViewWrapper(new JspView("jsp.back.customermanage.index"), data);
+	}
+	
+	/**
+	 * 查看客户列表(筛选条件)
+	 * 注意：销售和渠道销售只能看到自己添加的
+	 * 
+	 */
+	@At("/search")
+	public View search(HttpServletRequest request
+			, @Param("pageNum") int pageNum
+			, @Param("realName") String realName
+			//电话做模糊查询
+			//, @Param("mobile") String mobile
+			, @Param("customerType") Integer customerType
+			, @Param("fromWhere") Integer fromWhere
+			, @Param("startTime") Date startTime
+			, @Param("endTime") Date endTime
+			, @Param("projectId") Integer projectId
+			, @Param("channelId") Integer channelId
+			
+			) {
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		User user = ManagerService.getUser(request);
+		QueryResult qr = null;
+		
+		//拼接查询条件
+		String sql = "1=1";
+		if (realName != null && !"".equals(realName)) {
+			sql += " and realName='"+realName+"'";
+		}
+		
+		if (customerType != null) {
+			sql += " and customerType="+customerType;
+		}
+		
+		if (fromWhere != null) {
+			sql += " and fromWhere="+fromWhere;
+		}
+		
+		if (startTime != null) {
+			sql += " and createTime>="+DateUtil.formatyyyyMMdd(startTime);
+		}
+		
+		if (endTime != null) {
+			sql += " and createTime<="+ DateUtil.formatyyyyMMdd(endTime) ;
+		}
+		
+		if (projectId != null) {
+			//多表利用子查询
+			sql += " and projectId="+projectId;
+		} 
+		
+		if (channelId != null) {
+			//多表利用子查询
+			sql += " and CHANNELID="+channelId;
+		} 
+		System.out.println(sql);
+		
+		//销售和渠道销售只能看到自己添加的数据
+		if (RoleType.SALES.getName().equals(user.getRole().getName()) || RoleType.CHANNEL_SALES.getName().equals(user.getRole().getName())) {
+			sql+=" and userid="+user.getId();
+			sql +=" order by createTime desc";
+			qr = customerService.getPageListByConditionCascade(pageNum, PAGESIZE, Cnd.wrap(sql));
+		} else {
+			sql +=" order by createTime desc";
+			qr = customerService.getPageListByConditionCascade(pageNum, CustomerAction.PAGESIZE,Cnd.wrap(sql));
+		}
+		
+		//查询所有渠道公司和项目名称
+		List<Channel> channels = channelService.findAll();
+		List<Project> projects = projectService.findAll();
+
+		data.put("qr", qr);
+		data.put("realName", realName);
+		data.put("customerType", customerType);
+		data.put("fromWhere", fromWhere);
+		data.put("startTime", startTime);
+		data.put("endTime", endTime);
+		data.put("projectId", projectId);
+		data.put("channelId", channelId);
+		data.put("channels", channels);
+		data.put("projects", projects);
+		return new ViewWrapper(new JspView("jsp.back.customermanage.index"), data);
+	}
+	
+	/**
+	 * 保存客户 
+	 */
+	@At("/save")
+	@Aop({"operateLogInterceptor"})
+	public View saveOrUpdate(HttpServletRequest request,@Param("::customer.") Customer customer) {
+		User user = ManagerService.getUser(request);
+		//0:成功，1失败
+		Integer msgType = 0;
+		customer.setCreateTime(new Date());//创建时间
+		customer.setUserId(user.getId());  //该条信息创建者
+		customer.setState(Customer.STATE_FOLLOW_ADDCINFO); //在这个状态可以删除该条记录
+		customerService.saveEntity(customer);
+		request.setAttribute("logDesc", "添加客户->" + customer.getRealName());
+		return new ViewWrapper(new RawView(Formater.JSON_FORMATER), msgType);
+	}
+	
+	/**
+	 * 删除销售员初始录入的客户信息（未预约，预约后的信息不能删除）
+	 */
+	@At("/deletebase")
+	@Aop({"operateLogInterceptor"})
+	public View delete(HttpServletRequest request,
+			HttpServletResponse response,
+			@Param("id") Integer id
+			){
+		customerService.deleteCustomerCascade(id);
+		request.setAttribute("logDesc", "删除一条客户信息");
+		try {
+			response.sendRedirect(request.getContextPath() + "/customer/index");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 修改销售员初始录入的基础客户信息
+	 */
+	@At("/toubase")
+	public View updateBase(HttpServletRequest request,@Param("id") Long id){
+		Map<String, Object> data = new HashMap<String, Object>();
+		List<Project> projects = projectService.findAll();
+		List<Channel> channels = channelService.findAll();
+		Customer c = customerService.getByIdCascade(id);
+		data.put("projects", projects);
+		data.put("channels", channels);
+		data.put("customer", c);
+		return new ViewWrapper(new JspView("jsp.back.customermanage.updateBase"), data);
+	}
+	
+	/**
+	 * 修改销售员初始录入的基础客户信息
+	 */
+	@At("/ubase")
+	@Aop({"operateLogInterceptor"})
+	public View updateBase(HttpServletRequest request,@Param("::customer.") Customer customer) {
+		User user = ManagerService.getUser(request);
+		//0:成功，1失败
+		Integer msgType = 0;
+		customer.setCreateTime(new Date());//创建时间
+		customer.setUserId(user.getId());  //该条信息创建者
+		customer.setState(Customer.STATE_FOLLOW_ADDCINFO); //在这个状态可以删除该条记录
+		customerService.updateEntity(customer);
+		request.setAttribute("logDesc", "修改客户信息->" + customer.getRealName());
+		return new ViewWrapper(new RawView(Formater.JSON_FORMATER), msgType);
+	}
+	
+	/**
+	 * 跳转到添加客户页面
+	 */
+	@At("/toadd")
+	public View toAdd(HttpServletRequest request){
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		List<ICity> citys = ServiceFactory.createCityService().getStaticCities();
+		
+		List<Project> projects = projectService.findAll();
+		List<Channel> channels = channelService.findAll();
+		data.put("projects", projects);
+		data.put("channels", channels);
+		data.put("citys", citys);		
+		return new ViewWrapper(new JspView("jsp.back.customermanage.add"), data);
+	}
+	
+	/**
+	 * 跳转添加预约信息页面
+	 */
+	@At("/appointment")
+	public View appointment(HttpServletRequest request,@Param("id") Integer id){
+		Map<String, Object> data = new HashMap<String, Object>();
+		List<Channel> channels = channelService.findAll();
+		Customer customer = customerService.getByIdCascade(id);
+		data.put("id", id);
+		data.put("channels", channels);
+		data.put("customer", customer);
+		return new ViewWrapper(new JspView("jsp.back.customermanage.appointment"), data);
+	}
+	
+	/**
+	 * 保存预约信息
+	 */
+	@At("/saveappoint")
+	@Aop({"operateLogInterceptor"})
+	public View saveAppointment(HttpServletRequest request
+			,@Param("id") Integer id
+			,@Param("agentName") String agentName
+			,@Param("agentMobile") String agentMobile
+			,@Param("channelId") Integer channelId
+			,@Param("appointmentTime") Date appointmentTime
+			){
+		//0:成功，1失败
+		Integer msgType = 0;
+		Customer customer = customerService.getById(id);
+		customer.setAgentName(agentName);
+		customer.setAgentMobile(agentMobile);
+		customer.setChannelId(channelId);
+		customer.setAppointmentTime(appointmentTime);
+		
+		//添加标记，已经添加预约信息，不能删除
+		customer.setState(Customer.STATE_FOLLOW_YUYUE);
+		
+		customerService.updateEntity(customer);
+		
+		request.setAttribute("logDesc", "添加预约信息->" + agentName +"在"+ DateUtil.formatyyyyMMddHHmm(appointmentTime)+"带客户看房");
+		return new ViewWrapper(new RawView(Formater.JSON_FORMATER), msgType);
+	}
+	
+	/**
+	 * 跳转添加跟进信息界面
+	 */
+	@At("/tofollow")
+	public View toFollowPage(HttpServletRequest request,@Param("customerId") Integer customerId){
+		Map<String, Object> data = new HashMap<String, Object>();
+		Customer customer = customerService.getByIdCascade(customerId);
+		data.put("customer", customer);
+		return new ViewWrapper(new JspView("jsp.back.customermanage.followIndex"), data);
+	}
+	
+	/**
+	 * 添加跟进信息
+	 */
+	@At("/savefollow")
+	@Aop({"operateLogInterceptor"})
+	public View saveFollow(HttpServletRequest request
+			,HttpServletResponse response
+			,@Param("customerId") Integer customerId
+			,@Param("content") String content
+			){
+		User user = ManagerService.getUser(request);
+		CustomerFollow customerFollow = new CustomerFollow();
+		customerFollow.setContent(content);
+		customerFollow.setCreateTime(new Date());
+		customerFollow.setCustomerId(customerId);
+		customerFollow.setRecorderName(user.getRealName());
+		customerFollow.setRoleName(user.getRole().getName());
+		
+		//修改为跟进状态
+		Customer c = customerService.getById(customerId);
+		c.setState(Customer.STATE_FOLLOW_FOLLOW);
+		customerService.updateEntity(c);
+		customerFollowService.saveEntity(customerFollow);
+		try {
+			response.sendRedirect(request.getContextPath() + "/customer/tofollow?customerId=" + customerId);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		request.setAttribute("logDesc", "添加跟进记录->"+user.getRealName()+"跟进客户:"+c.getRealName());
+		return null;
+	}
+	
+	@At("/changedistrict")
+	public View hotAreaList(@Param("city") String city,@Param("district") String district,HttpServletRequest request,HttpServletResponse response){
+		List <String> hotAreaList = ServiceFactory.createHotAreaService().getHotAreaList(city, district);
+		return new ViewWrapper(new UTF8JsonView(new JsonFormat()),hotAreaList);
+	}
+	
+	@At("/changecity")
+	public View districtList(@Param("city") String city,HttpServletRequest request,HttpServletResponse response){
+		Map<String,Object> map = new HashMap<String,Object>();
+		List<String> districtLists = ServiceFactory.createDistrictService().getDistrictList(city);
+		map.put("districtLists", districtLists);
+		List <String> hotAreaLists = ServiceFactory.createHotAreaService().getHotAreaList(city, districtLists.get(0));
+		map.put("hotAreaLists", hotAreaLists);
+		String json = Json.toJson(map);
+		return new ViewWrapper(new RawView(Formater.JSON_FORMATER), json);
+	}
+}

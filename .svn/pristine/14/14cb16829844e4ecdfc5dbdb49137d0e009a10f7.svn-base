@@ -1,0 +1,60 @@
+/**
+ * 闭包回调方法定义
+ */
+function invoker(fn, args, off) {
+	this.fn = (Object.prototype.toString.call(fn) === '[object Function]' ? fn : null);
+	this.args = (args.length > off ? Array.prototype.slice.call(args, off) : null);
+
+	/*
+	 * 调用回调，并自动传入参数列表
+	 */
+	this.invoke = function() {
+		if(this.fn) {
+			var args = arguments;
+
+			if(this.args) {
+				for(var i in this.args) {
+					Array.prototype.push.call(args, this.args[i]);
+				}
+			}
+
+			this.fn.apply(null, args);
+		}
+	};
+
+	/*
+	 * 将原参数列表，附加在 callback 参数列表之后，并返回新的参数列表
+	 */
+	this.appendArgs = function() {
+		var args = arguments;
+
+		if(this.args) {
+			for(var i = this.args.length - 1; i >= 0; i --) {
+				Array.prototype.splice.call(args, 0, 0, this.args[i]);
+			}
+		}
+
+		if(this.fn)
+			Array.prototype.splice.call(args, 0, 0, this.fn);
+
+		return args;
+	};
+
+	/*
+	 * 在原参数列表之后，附加 callback 参数列表，并返回新的参数列表
+	 */
+	this.prependArgs = function() {
+		var args = arguments;
+
+		if(this.fn)
+			Array.prototype.push.call(args, this.fn);
+
+		if(this.args) {
+			for(var i in this.args) {
+				Array.prototype.push.call(args, this.args[i]);
+			}
+		}
+
+		return args;
+	};
+}

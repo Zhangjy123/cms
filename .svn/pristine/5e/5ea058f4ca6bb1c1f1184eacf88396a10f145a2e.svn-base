@@ -1,0 +1,9 @@
+package com.yofang.cms.service.sysmanage;
+
+
+import com.yofang.cms.model.sysmanage.Project;
+import com.yofang.cms.service.BaseService;
+
+public interface ProjectService extends BaseService<Project>{
+	
+}

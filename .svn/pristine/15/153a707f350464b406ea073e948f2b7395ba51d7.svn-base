@@ -1,0 +1,342 @@
+/**
+ * @author hsh
+ * 依赖Jquery
+ */
+(function(window){
+	//简单命名空间实现
+	if(window.com == null) {
+		com = {};
+	};
+	com.buge = {};
+	
+	/**
+	 * 验证插件启动方法
+	 * config:配置参数
+	 */
+	var validate = function (config) {
+		//所有的配置信息
+		var param = {
+			setting: {},
+			validators : {}
+		};
+		/**
+		 * 如果defauts中和config中有相同的选项，后者覆盖前者
+		 * 然后把覆盖后的结果赋值到param中
+		 */
+		$.extend(true,param,validate.defaults,config);
+		
+		/**对所有需要验证的输入款添加点击事件 */
+		$(param.setting.validateNode).blur(function(){
+			var str = $(this).attr("validate-method");
+			if(str != null && str != undefined){
+				var flag = executeValidate($(this),str,param);
+				if(!flag) return false;
+			}
+			return true;
+		});
+		
+		/**提交表单的按钮添加点击事件，并在提交前重新验证所有的标签 */
+		$(param.setting.submitButton.selector).bind("click",function(){
+			var array = $(param.setting.validateNode);
+			var validateValue = true;
+			for(var i = 0 ; i < array.length ; i++){
+				var str = $(array[i]).attr("validate-method");
+				if(str != null && str != undefined){
+					var flag = executeValidate($(array[i]),str,param);
+					if(!flag && validateValue == true) {
+						validateValue = flag;
+					}
+				}
+			}
+			
+			//如果验证没通过直接返回false
+			if (!validateValue) {
+				return false;
+			}
+			
+			//验证成功，ajax提交表单
+			if (param.setting.isAjaxSubmit){
+				$.ajax({
+					async:param.setting.ajax.async,
+					url:param.setting.ajax.url,
+					type:param.setting.ajax.type,
+					data:param.setting.ajax.data(param),//回调函数取表单数据
+					success:param.setting.ajax.success
+				});
+				return false;//消除点击事件
+			}
+			//不是ajax提交表单,	验证成功，提交表单
+			param.setting.submitButton.success(); 
+		});
+	};
+	/**
+	 * 默认配置参数
+	 * okClass	 	验证正确样式
+	 * errorClass   错误样式
+	 * errorNode    提示信息标签
+	 * submitButton	验证的表单的Jquery选择器
+	 * validateNode 验证的标签的Jquery选择器
+	 * ajax			$.ajax配置参数一样
+	 */
+	validate.defaults = {
+		setting:{
+			isAjaxSubmit : false,
+			okClass : 'ok',
+			errorClass : 'error',
+			errorDisplayNode: function(element){//查找错误提示框并返回
+				return element.parent("td").find("span");
+			},
+			validateNode: 'input',	//要验证的输入框
+			submitButton: {
+				'selector' : '#buttonSubmit',
+				success : function() {
+					$("form").submit();
+				}
+			},
+			//那些要提交表单的进行验证在提交
+			ajax: {
+				async:false,
+				data: function(config){
+					return $(config.setting.submitButton).serialize();
+				}
+			}
+		},
+		//内置验证规则
+		validators : {
+			'requiredEmail' : function(element) {
+				var value = element.val();
+				if(/^\s*$/.test(value)){
+					return false;
+				}else{
+					var emailParts = value.split('@');
+					if( emailParts.length == 2 ) {
+						var flag = false;
+		            	flag = (!(/[^a-zA-Z0-9_\+\.\-]/.test(emailParts[1])) && !(/[^a-zA-Z0-9_\+\.\-]/.test(emailParts[0])));
+		            	return flag;
+					}else{
+						return false;
+					}
+				}
+	        },
+	        
+	        //注意前台写验证规则的时候不要用\转义     例如：正确validate-regex="(^\d{15}$)|(^\d{17}[0-9Xx]$)" 错误： validate-regex="(^\\d{15}$)|(^\\d{17}[0-9Xx]$)"
+			'requiredRegex': function(element) {
+				var value = element.val();
+				var regexStr = element.attr("validate-regex");
+				if(/^\s*$/.test(value)){
+					return false;
+				}else{
+					if(new RegExp(regexStr).test(value)){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			},
+			
+			'requiredString' : function(element){
+				var password = element.val();
+				if(/^\s*$/.test(password)){
+					return false;
+				}else{
+					return true;
+				}
+			},
+		
+			'requiredMobile' : function(element){
+				var mobile = element.val();
+				if(/^\s*$/.test(mobile)){
+					return false;
+				}else{
+					if(/^\d{11}$/.test(mobile)){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			},
+			
+			"requiredPassword" : function(element){
+				var password = element.val();
+				if(/^\s*$/.test(password)){
+					return false;
+				}else{
+					if(/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,12}$/.test(password)){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			},
+			
+			"requiredDouble" : function(element){
+					var value = element.val();
+					if( /^(\d*.)?\d+$/.test(value)){
+						return true;
+					}else{
+						return false;
+					}
+			},
+
+			"Double" : function(element){
+					var value = element.val();
+					if(/^\s*$/.test(value)){
+						return null;
+					}else{
+						if(/^(\d*.)?\d+$/.test(value)){
+							return true;
+						}else{
+							return false;
+						}
+					}
+			},
+			
+			//验证是否为数字，整数和小数
+			"digital" : function(element){
+					var value = element.val();
+					if( /^\s*$/.test(value)){
+						return null;
+					}else{
+						if(/^((\d+)|(\d+\.\d+))$/.test(value)){
+							return true;
+						}else{
+							return false;
+						}
+					}
+			},
+			/**
+			 *验证下拉选框至少选择一个
+			 *使用注意：如果该提示款有提示信息，value必须置为value="",否者在select中去value时那么value="请选择一家银行"
+			 *<option disabled="disabled" ${(empty user.bankName)==true?'selected':''} value="" >请选择一家银行</option>
+			 */
+			'requiredSelect' : function(element) {
+					var value = element.attr("value"); 
+					if(value){
+						return true;
+					}
+					return false;
+			},
+			//验证checkbox至少选择一个  注意该name值必须唯一
+			"requiredCheckBox" : function(element){
+				var name = element.attr("name"); 
+				var dataList = $("input[name='"+name+"']"); //获取要判断的所有checkbox的标签
+				var retVal = false;
+				dataList.each(function(){ 
+					if($(this).attr("checked")){
+						retVal = true;
+						return;
+					}
+				});
+				return retVal;
+			}
+		}
+	};
+	
+	/**
+	 * 该验证器具有的方法
+	 */
+	validate.methods = {
+		  //添加
+		   addValidator : function(validator,config) {
+	        	var name = validator.name;
+	        	 config.validators[name] = validator;
+	        },
+	        //根据名字寻找
+	        findValidator : function(name,config){
+	        	var resultValidator = config.validators[name];
+	        	if(resultValidator != undefined){
+	        		return resultValidator;
+	        	}
+	        	return null;
+	        }
+	};
+	
+	/**
+	 * 某个输入框验证
+	 */
+	function executeValidate(element,validatorName,config){
+		var validatorFunction = validate.methods.findValidator(validatorName,config);
+		if(validatorFunction != null && validatorFunction != undefined){
+			clearTips(element,config);
+			var flag = validatorFunction(element);
+			var errorTips = $(element).attr("validate-errorTips");
+			if(flag == null){
+				flag = true;
+			}else{
+				validatorCallBack(element,flag,errorTips,config);//对验证结果进行提示
+			}
+			return flag;
+		}
+	}
+	
+	/**
+	 * 对某个输入框验证的结果进行友好的提示
+	 */
+	function validatorCallBack(element,flag,errorTips,config){
+		var span = config.setting.errorDisplayNode(element);//errorDisplayNode这是一个方法:回调函数
+		//校验成功
+		if(flag){
+			$(span).addClass(config.setting.okClass);
+			$(span).removeClass(config.setting.errorClass);
+			$(span).text("");
+		}
+		//校验失败
+		else{
+			$(span).removeClass(config.setting.okClass);
+			$(span).addClass(config.setting.errorClass);
+			$(span).text(errorTips);
+		}
+	}
+	/**
+	 *  清除上一次提示信息的样式
+	 */
+	function clearTips(element,config){
+		//var span = element.siblings(config.setting.);
+		var span = config.setting.errorDisplayNode(element);//errorDisplayNode这是一个方法:回调函数
+		/**
+		 调用者可以注入一个方法，逻辑自己实现选择错误提示款的标签元素span（在config有默认的callback）
+		 function(element){
+			return null;
+		}
+		 */
+		$(span).removeClass(config.setting.okClass);
+		$(span).removeClass(config.setting.errorClass);
+	}
+	
+	window.com.buge.validate = validate;
+})(window);
+
+/**
+	快速使用模板
+	validate-method
+	validate-errorTips
+<script type="text/javascript">
+	$().ready(function(){
+		com.buge.validate({
+			setting:{
+				isAjaxSubmit : false,			//是否是ajax提交表单	
+				okClass : 'IsOK',		//正确提示框样式
+				errorClass : 'IsError', //错误提示框样式
+				errorDisplayNode: function(element){//查找错误提示框（span节点）并返回	 注意：这边要以$(element)这个节点开始匹配
+					return $(element).parent("td").find("span");
+				},
+				validateNode: '#addCForm input,#addCForm textarea',	//要验证的输入框
+				submitButton: {											
+					'selector' : '#buttonSubmit',					//点击提交的按钮
+					success : function() {							//点击提交的按钮,重新验证所有的输入框，成功后执行的回调函数
+						//$("form").submit();
+					}
+				},		//那些要提交表单的进行验证在提交
+																	//ajax提交表单配置参数
+				ajax : {
+					
+				}
+			},
+			//自定义验证规则
+			validators : {
+			}
+		});
+	});
+</script>
+	
+ */

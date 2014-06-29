@@ -1,0 +1,32 @@
+package com.yofang.cms.web.module.back.sysmanage;
+
+import java.util.List;
+
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.mvc.View;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.view.JspView;
+import org.nutz.mvc.view.ViewWrapper;
+
+import com.yofang.cms.model.sysmanage.Role;
+import com.yofang.cms.service.sysmanage.RoleService;
+
+/**
+ * 角色管理
+ * @author hsh
+ *
+ */
+@IocBean(scope="request")
+@At("/role")
+public class RoleAction {
+	
+	@Inject
+	private RoleService roleService;
+	
+	@At("/index")
+	public View index(){
+		List<Role> roleList = roleService.findAll();
+		return new ViewWrapper(new JspView("jsp.back.sysmanage.roleIndex"), roleList);
+	}
+}

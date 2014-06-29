@@ -1,0 +1,102 @@
+.clearfix {1 display: inline-table;}
+.fr {
+	float : right;
+}
+.pagin a, .pagin span {
+	float: left;
+	height: 20px;
+	padding: 3px 10px;
+	border: 1px solid #ccc;
+	margin-left: 2px;
+	font-family: arial;
+	line-height: 20px;
+	font-size: 14px;
+	overflow: hidden;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px
+}
+.pagin .text, .pagin .current {
+	border: 0;
+	padding: 4px 11px
+}
+.pagin a:link, .pagin a:visited {
+	color: #005aa0
+}
+.pagin a:hover, .pagin a:active {
+	background: #005aa0;
+	color: #fff;
+	text-decoration: none
+}
+.pagin .current, .pagin .current:link, .pagin .current:visited {
+	color: #f60;
+	font-weight: 700
+}
+.pagin b {
+	display: block;
+	position: absolute;
+	top: 9px;
+	width: 5px;
+	height: 9px;
+	background-image: url(../../images/bg_hotsale.gif);
+	background-repeat: no-repeat;
+	overflow: hidden
+}
+.pagin .prev, .pagin .next, .pagin .prev-disabled, .pagin .next-disabled {
+	position: relative;
+	padding-top: 5px;
+	height: 18px;
+	line-height: 18px
+}
+.pagin .prev-disabled, .pagin .next-disabled {
+	color: #ccc;
+	cursor: default
+}
+.pagin .prev, .pagin .prev-disabled {
+	padding-left: 12px
+}
+.pagin .prev b {
+	left: 3px;
+	background-position: -68px -608px
+}
+.pagin .prev-disabled b {
+	left: 3px;
+	background-position: -80px -608px
+}
+.pagin .next, .pagin .next-disabled {
+	padding-right: 12px
+}
+.pagin .next b {
+	right: 3px;
+	background-position: -62px -608px
+}
+.pagin .next-disabled b {
+	right: 3px;
+	background-position: -74px -608px
+}
+.pagin-m a, .pagin-m span {
+	height: 14px;
+	line-height: 14px;
+	font-size: 12px
+}
+.pagin-m b {
+	top: 5px
+}
+.pagin-m .prev, .pagin-m .next, .pagin-m .prev-disabled, .pagin-m .next-disabled {
+	padding-top: 3px;
+	height: 14px;
+	line-height: 14px;
+*line-height:16px
+}
+
+.pagin .text i{font-style:normal;font-weight:bold;color:#E4393C;}
+.pagin-m b{top:7px;}
+
+/*pagin*/
+.pagin .prev,.pagin .next,.pagin .prev-disabled,.pagin .next-disabled{padding:4px 10px 5px;border-radius:3px;background:#fff;}
+.pagin a,.pagin span{height:19px;}
+.pagin a{border-radius:3px;}
+.pagin .page-skip{border:medium none;font-size:12px;height:26px;padding:0 10px;}
+.pagin .page-skip em{float:left;height:26px;line-height:26px;font-style: normal;}
+.pagin .jumpto{float:left;width:36px;height:21px;padding:1px;border-width:1px;border-style:solid;border-color:#aaa #ddd #ddd #aaa;margin:0 5px;text-align:center;font-family:verdana;}
+.pagin a.btn-skipsearch,.pagin .btn-skipsearch:hover{float:left;width:53px;height:25px;padding:0;margin-left:5px;border:none;background:url(/images/20130415i.png) no-repeat -126px -52px;line-height:25px;text-align:center;cursor:pointer;color:#333;}
+.pagin-m a,.pagin-m span.text{height:14px;font-family:verdana;}

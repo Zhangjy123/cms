@@ -1,0 +1,136 @@
+package com.yofang.cms.web.module.channel;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.nutz.dao.Cnd;
+import org.nutz.dao.QueryResult;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.mvc.View;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.view.JspView;
+import org.nutz.mvc.view.RawView;
+import org.nutz.mvc.view.ViewWrapper;
+
+import com.yofang.cms.model.Channel;
+import com.yofang.cms.service.ChannelService;
+import com.yofang.cms.utils.CommonUtil;
+
+/**
+ * 后台管理员渠道管理
+ * @author gaozp
+ */
+@IocBean(scope = "request")
+@At("/channel")
+public class ChannelAction {
+	private static final int PAGESIZE = 2;
+	
+	
+	@Inject
+	private ChannelService channelService;
+	
+	/**
+	 * 添加
+	 * 
+	 */
+	@At("/add")
+	public View add() {
+		return new ViewWrapper(new JspView("jsp.back.channelmanage.add"), null);
+	}
+	/**
+	 * 查看所有的渠道
+	 */
+	@At("/index")
+	public View index(
+			HttpServletRequest request
+			,@Param("pageNum") int pageNum
+			,@Param("channelName") String channelName
+			, @Param("contacts") String contacts
+			, @Param("phone") String phone) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		if (pageNum == 0) pageNum = 1;
+		String str = "1=1";
+		if(CommonUtil.notEmpty(channelName))str+=" and channelName= '"+channelName+"'";
+		if(CommonUtil.notEmpty(contacts))str+=" and contacts= '"+contacts+"'";
+		if(CommonUtil.notEmpty(phone))str+=" and phone= '"+phone+"'";
+		QueryResult qr = channelService.getPageListByCondition(pageNum, ChannelAction.PAGESIZE, Cnd.wrap(str));
+		
+		data.put("qr", qr);
+		data.put("channelName", channelName);
+		data.put("contacts", contacts);
+		data.put("phone", phone);
+		return new ViewWrapper(new JspView("jsp.channel.index"), data);
+	}
+	
+	/**
+	 * 保存渠道
+	 */
+	@At("/save")
+	public View saveOrUpdate(@Param("id") Long id
+			, @Param("channelName") String channelName
+			, @Param("contacts") String contacts
+			, @Param("phone") String phone
+			,HttpServletRequest request, HttpServletResponse response) {
+		Integer msgType = 0;
+		if(CommonUtil.isEmpty(channelName)){
+			msgType = 1;
+		}else if(CommonUtil.isEmpty(contacts)){
+			msgType = 2;
+		}else if(CommonUtil.isEmpty(phone)){
+			msgType = 3;
+		}else{
+			if(id != null){
+				Channel t = channelService.getById(id);
+				if(CommonUtil.notEmpty(channelName))t.setChannelName(channelName);
+				if(CommonUtil.notEmpty(contacts))t.setContacts(contacts);
+				if(CommonUtil.notEmpty(phone))t.setPhone(phone);
+				channelService.updateEntity(t);
+			}else{
+				Channel c = new Channel();
+				if(CommonUtil.notEmpty(channelName))c.setChannelName(channelName);
+				if(CommonUtil.notEmpty(contacts))c.setContacts(contacts);
+				if(CommonUtil.notEmpty(phone))c.setPhone(phone);
+				c.setCreateDate(new Date());
+				channelService.saveEntity(c);
+			}
+		}
+		return new ViewWrapper(new RawView("application/json"), msgType);
+//		try {
+//			response.sendRedirect(request.getContextPath() + "/channel/index");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+	}
+	/**
+	 * 删除渠道
+	 */
+	@At("/delete")
+	public View delete(@Param("id") Long id
+			,HttpServletRequest request, HttpServletResponse response){
+		if(id!=null)channelService.deleteById(id);
+		try {
+			response.sendRedirect(request.getContextPath() + "/channel/index");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
+	 * 修改渠道
+	 */
+	@At("/update")
+	public View update(@Param("id") Long id){
+		Channel c = channelService.getById(id);
+		return new ViewWrapper(new JspView("jsp.back.channelmanage.update"), c);
+	}
+
+}

@@ -1,0 +1,18 @@
+package com.yofang.cms.service.impl.sysmanage;
+
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.sysmanage.ProjectDaoImpl;
+import com.yofang.cms.model.sysmanage.Project;
+import com.yofang.cms.service.impl.BaseServiceImpl;
+import com.yofang.cms.service.sysmanage.ProjectService;
+
+@IocBean(name="projectService", args={"refer:projectDao"})
+public class ProjectServiceImpl extends BaseServiceImpl<Project, ProjectDaoImpl> implements ProjectService {
+	
+	
+	public ProjectServiceImpl(ProjectDaoImpl baseDao) {
+		super(baseDao);
+	}
+}

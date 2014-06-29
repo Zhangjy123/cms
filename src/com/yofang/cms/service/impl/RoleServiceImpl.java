@@ -1,0 +1,59 @@
+package com.yofang.cms.service.impl;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.RoleDaoImpl;
+import com.yofang.cms.model.Privilege;
+import com.yofang.cms.model.Role;
+import com.yofang.cms.service.RoleService;
+import com.yofang.cms.web.formbean.Menu;
+import com.yofang.cms.web.formbean.RoleBean;
+
+@IocBean(name="roleService", args={"refer:roleDao"})
+public class RoleServiceImpl extends BaseServiceImpl<Role, RoleDaoImpl> implements RoleService {
+	
+	public RoleServiceImpl(RoleDaoImpl baseDao) {
+		super(baseDao);
+	}
+
+	@Override
+	public List<RoleBean> getAllRolePriveleges() {
+		//获取所有角色的所有权限
+		List<Role> roleList =  baseDao.getAllRolePriveleges();
+		//把功能和菜单权限从新封装到临时bean中
+		List<RoleBean> roleBeanList = new ArrayList<RoleBean>();
+		RoleBean temp = null;
+		for (Role role : roleList) {
+			temp = new RoleBean();
+			temp.setRoleId(role.getId());
+			temp.setRoleName(role.getName());
+			List<Privilege> data = baseDao.getPrivilgeOfRole(role);
+			Menu menu = null;
+			for (Privilege privilege : data) {
+				//封装某个角色的一级菜单
+				if ("1".equals(privilege.getFlag()) && privilege.getPid() == 0) {
+					menu = new Menu();
+					menu.setOneMenu(privilege);
+					//封装某个角色的一级菜单下的一级菜单
+					for (Privilege p : data) {
+						if (p.getPid() == privilege.getId()) {
+							menu.getTowMenuList().add(p);
+						}
+					}
+					//保存菜单
+					temp.getMenu().add(menu);
+				} else if ("2".equals(privilege.getFlag())) {
+					//封装某个角色具有的功能权限
+					temp.getFunPrivileges().add(privilege);
+				} 
+			}
+			//保存一个角色的权限
+			roleBeanList.add(temp);
+		}
+		return roleBeanList;
+	}
+}

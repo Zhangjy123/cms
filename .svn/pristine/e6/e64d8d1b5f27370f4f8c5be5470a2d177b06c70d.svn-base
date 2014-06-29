@@ -1,0 +1,14 @@
+package com.yofang.cms.dao.impl.sysmanage;
+
+
+
+import org.nutz.ioc.loader.annotation.IocBean;
+
+import com.yofang.cms.dao.impl.BaseDaoImpl;
+import com.yofang.cms.dao.sysmanage.ProjectDao;
+import com.yofang.cms.model.sysmanage.Project;
+
+@IocBean(name="projectDao",fields={"dao"})
+public class ProjectDaoImpl extends BaseDaoImpl<Project> implements ProjectDao {
+
+}

@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+<link href="../css/easydialog.css" rel="stylesheet" type="text/css">
+<script src="../js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<script src="../js/easydialog.min.js" type="text/javascript"></script>
+<script>
+$(document).ready(function() {
+    followUp();
+	mune();
+});
+function followUp(){
+	$(".follow").toggle(function(){
+		var intlav =$(this).parentsUntil("table").children(".followtr").children().length;
+		if(intlav==0){
+		var tr="<td colspan='12'><div class='followdiv_input cle'><input type='text'/><a href='javascript:;' onClick='cont(this)'>发送</a></div></td>";
+		$(this).parentsUntil("table").children(".followtr").show();
+		$(this).parentsUntil("table").children(".followtr").append(tr);
+		intlav++;
+		}else{
+			$(this).parentsUntil("table").children(".followtr").show();
+			}
+		},function(){
+			$(this).parentsUntil("table").children(".followtr").hide();
+			})
+	}
+function cont(input){
+	var tetle=$(input).prev("input").val();
+	var zhiwei="总监";
+	var cont="<div class='followdiv_cpnt cle'><span>"+zhiwei+"</span>"+tetle+"</div>";
+	$(input).parent().parent().append(cont);
+	var tetle=$(input).prev("input").val("");
+	}
+function mune(){
+	$(".menu li").hover(function(){
+		$(this).children("ul").show();
+		},function(){
+		$(this).children("ul").hide();
+			})
+	}		
+</script>
+<title>客户管理</title>
+</head>
+
+<body>
+<!--头部-->
+<div class="top">
+  <div class="logo">
+    <ul>
+      <li><img src="../images/khimg_r1_c1.jpg"></li>
+      <li>有房网客户管理</li>
+    </ul>
+  </div>
+  <!--退出-->
+  <div class="out">
+    <ul>
+    <li><div>欢迎，xxxxxx！</div></li>
+      <li><a href="javascript:;">修改密码</a></li>
+      <li>|</li>
+      <li><a href="javascript:;">退出</a></li>
+    </ul>
+  </div>
+  <!--菜单-->
+  <div class="menu">
+    <ul>
+      <li><a href="user.html" class="menu_a">用户管理</a>
+      	<ul style="display:none;">
+     	 <li><a href="user.html" class="menu_ae">我也不知道</a></li>
+      	 <li><a href="user.html" class="menu_ae">我也知道</a></li>
+      	</ul>
+      </li>
+      <li><a href="xiangmu.html" class="menu_a">项目管理</a></li>
+      <li><a href="qudao.html" class="menu_a">渠道管理</a></li>
+      <li><a href="index.html" class="menu_aon">客户管理</a></li>
+    </ul>
+  </div>
+</div>
+<!--内容-->
+<div class="cont">
+  <h4>客户管理</h4>
+  <div class="adduser add"><a href="javascript:;">+添加客户</a></div>
+  <div class="select">
+    <form>
+      <div class="select_cont cle">
+        <div class="name_ss">姓名：
+          <input type="text">
+        </div>
+        <div class="name_ss">手机号：
+          <input type="text">
+        </div>
+        <div class="name_ss">状态：
+          <select>
+            <option>预约</option>
+          </select>
+        </div>
+        <div class="name_ss">城市
+          <select>
+            <option>预约</option>
+          </select>
+        </div>
+        <div class="name_ss">来源：
+          <select>
+            <option>来源</option>
+          </select>
+        </div>
+        <div class="name_ss">项目类型：
+          <select>
+            <option>写字楼</option>
+          </select>
+        </div>
+        <div class="name_ss">登记时间：
+          <input type="text">
+        </div>
+        <div class="name_ss">项目名称：
+          <input type="text">
+        </div>
+        <div class="name_ss"> <a href="javascript:;" class="cun">搜索</a></div>
+      </div>
+    </form>
+  </div>
+  <div class="list cle">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0"  bordercolor="#000000">
+      <tr style="font-size:14;">
+        <td>序号</td>
+        <td>姓名</td>
+        <td>手机号</td>
+        <td>客户类型</td>
+        <td>状态</td>
+        <td>项目类型</td>
+        <td>来源</td>
+        <td>公司名</td>
+        <td>登记时间</td>
+        <td>看房时间</td>
+        <td width="160">操作</td>
+      </tr>
+      <tr style="color:#666;">
+        <td>1</td>
+        <td>张三</td>
+        <td>139*****1111</td>
+        <td>个人客户</td>
+        <td>新添加</td>
+        <td>商铺</td>
+        <td>连加介绍</td>
+        <td>有房网</td>
+        <td>2014-5-6</td>
+        <td>2014-6-6</td>
+        <td><a href="javascript:;" class="table_a">查看</a><a href="javascript:;" class="table_a">修改</a><a href="javascript:;" class="follow table_a">跟进</a><a href="javascript:;" class="table_a">删除</a></td>
+      </tr>
+      <tr>
+        <td style="font-size:14; font-weight:600;">城市</td>
+        <td style="color:#666;">北京</td>
+        <td style="font-size:14; font-weight:600;">需求</td>
+        <td colspan="8" style="color:#666;">&nbsp;</td>
+      </tr>
+      <tr class='followtr' style="display:none;"></tr>
+      <tr style="color:#666;">
+        <td>2</td>
+        <td>李四</td>
+        <td>139*****1111</td>
+        <td>个人客户</td>
+        <td>新添加</td>
+        <td>商铺</td>
+        <td>连加介绍</td>
+        <td>有房网</td>
+        <td>2014-5-6</td>
+        <td>2014-6-6</td>
+        <td><a href="javascript:;"  class="table_a">查看</a><a href="javascript:;" class="table_a">修改</a><a href="javascript:;" class="follow table_a">跟进</a><a href="javascript:;" class="table_a">删除</a></td>
+      </tr>
+      <tr>
+        <td style="font-size:14; font-weight:600;">城市</td>
+        <td style="color:#666;">北京</td>
+        <td style="font-size:14; font-weight:600;">需求</td>
+        <td colspan="8" style="color:#666;">&nbsp;</td>
+      </tr>
+      <tr class='followtr' style="display:none;"></tr>
+    </table>
+    <ul>
+      <li><a href="javascript:;" class="list_ul_a">末页</a></li>
+      <li><a href="javascript:;" class="list_ul_a">下一页</a></li>
+      <li><a href="javascript:;" class="list_ul_a">4</a></li>
+      <li><a href="javascript:;" class="list_ul_a">3</a></li>
+      <li><a href="javascript:;" class="list_ul_a">2</a></li>
+      <li><a href="javascript:;" class="list_ul_aon">1</a></li>
+      <li><a href="javascript:;" class="list_ul_a">上一页</a></li>
+      <li><a href="javascript:;" class="list_ul_a">首页</a></li>
+    </ul>
+  </div>
+</div>
+<!--弹出层-->
+<div id="imgBox" style="display:none;" class="imgBox cle">
+  <div class="imgBox_b">
+    <div class="imgBox_b_l">合作信息</div>
+    <div class="imgBox_b_r">
+      <button id="colsebutton"></button>
+    </div>
+  </div>
+  <!--基本信息-->
+  <div class="imgBox_cont cle">
+    <form>
+      <div class="select_cont cle">
+        <div class="name_ss">姓名：
+          <input type="text">
+        </div>
+        <div class="name_ss">手机号：
+          <input type="text">
+        </div>
+        <div class="name_ss">状态：
+          <select>
+            <option>预约</option>
+          </select>
+        </div>
+        <div class="name_ss">城市
+          <select>
+            <option>预约</option>
+          </select>
+        </div>
+        <div class="name_ss">来源：
+          <select>
+            <option>来源</option>
+          </select>
+        </div>
+        <div class="name_ss">项目类型：
+          <select>
+            <option>写字楼</option>
+          </select>
+        </div>
+        <div class="name_ss">登记时间：
+          <input type="text">
+        </div>
+        <div class="name_ss">项目名称：
+          <input type="text">
+        </div>
+      </div>
+      <div class="name_ss"> <a href="javascript:;" class="cun">保存</a></div>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".add a").click(function(){
+		var id = $(this).attr("lang");
+		dialogSomeThing(id);
+	})
+})
+function dialogSomeThing(id){
+	var div = $("#imgBox");
+	$(div).text(id);
+	var e= $(div).attr("id");
+	easyDialog.open({
+		container :e,
+		fixed : false
+	});
+	var button = $(div).find("#colsebutton");
+	$(button).unbind();
+	$(button).bind('click',function(){
+		easyDialog.close();
+	});
+}
+</script>
+</body>
+</html>
