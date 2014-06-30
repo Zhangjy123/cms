@@ -39,7 +39,7 @@
 			</c:forEach>
 		</ul>
 		<h2>管理系统说明</h2>
-		<div class="sidebar_section_text">有房网后台管理系统有房网后台管理系统有房网后台管理系统有房网后台管理系统</div>
+		<div class="sidebar_section_text">123有房网后台管理系统有房网后台管理系统有房网后台管理系统有房网后台管理系统</div>
 		<div class="clear"></div>
 
 	</div>

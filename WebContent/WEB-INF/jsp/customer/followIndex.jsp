@@ -1,7 +1,7 @@
 <%@page import="com.yofang.cms.manage.ManagerService"%>
-<%@page import="com.yofang.cms.model.sysmanage.User"%>
+<%@page import="com.yofang.cms.model.User"%>
 <%@page import="java.util.Map"%>
-<%@page import="com.yofang.cms.model.customermanage.Customer"%>
+<%@page import="com.yofang.cms.model.Customer"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
