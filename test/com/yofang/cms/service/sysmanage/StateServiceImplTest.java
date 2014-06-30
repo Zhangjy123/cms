@@ -26,10 +26,24 @@ private static StateService stateService;
 	@Test
 	public void SaveTest(){
 		State state = new State();
-		state.setId(1);
-		state.setSort(1);
-		state.setStateName("新客户");
-		stateService.saveEntity(state);
+		for(int i=1;i<10;i++){
+			state.setId(i);
+			state.setSort(i);
+			String str = "";
+			switch(i){
+			case 1 : str="新客户";
+			case 2 : str = "已预约";
+			case 3 : str = "已看房";
+			case 4 : str = "客户已确认";
+			case 5 : str = "已交订金";
+			case 6 : str = "已购房";
+			case 7 : str = "已申请佣金";
+			case 8 : str = "已申请佣金";
+			case 9 : str = "佣金已发放";
+			}
+			state.setStateName(str);
+			stateService.saveEntity(state);
+		}
 	}
 
 }

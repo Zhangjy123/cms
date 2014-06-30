@@ -15,7 +15,7 @@
 %>
 <div class="header">
 	<div class="title">
-		<a href="javascript:void(0);">有房网后台管理系统</a>
+		<a href="javascript:void(0);">有房网后台管理系统456</a>
 	</div>
 	<div class="header_right">
 		<span style="float:left;">欢迎,</span><a style="float:left;" href="#"><%=user.getRealName()%></a><a href="#" class="button red" style="margin-top:-8px">注销</a>
